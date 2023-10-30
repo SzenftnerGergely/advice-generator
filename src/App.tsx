@@ -3,12 +3,13 @@ import { useEffect, useState } from "react"
 
 type Advice = {
   id: number,
-  advice: string
+  advice: string,
 }
 
 function App() {
-  const [advice, setAdvice] = useState<Advice | string>("");
+  const [advice, setAdvice] = useState<Advice>("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false)
 
   const getAdvice = () => {
     setLoading(true);
@@ -16,12 +17,15 @@ function App() {
     axios
       .get('https://api.adviceslip.com/advice')
       .then((response) => {
-        setAdvice(response.data.slip)
+        setAdvice(response.data.slip)        
       })
       .catch(error => {
         console.log(error);
+        setError(true)
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false)
+      });
   };
 
   useEffect(() => {
@@ -30,7 +34,9 @@ function App() {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen">
-      <div
+      {error ?
+      (<div className="text-[#cee3e9] text-3xl">Oooops... something went wrong!</div>) :
+      (<div
         className="max-w-[540px] flex flex-col items-center 
         relative bg-[#313a49] p-10 rounded-lg"
       >
@@ -57,7 +63,7 @@ function App() {
         >
           <img src="/icon-dice.svg" alt="dive icon" />
         </div>
-      </div>
+      </div>)}
     </div>
   )
 }
